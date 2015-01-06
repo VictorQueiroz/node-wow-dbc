@@ -1,7 +1,7 @@
 {
   "name": "node-wow-dbc",
-  "version": "1.0.1",
-  "description": "World of Warcraft client side data manipulation.",
+  "version": "1.0.2",
+  "description": "World of Warcraft client side data manipulation node module.",
   "main": "dbc.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -16,5 +16,9 @@
     "map-stream": "0.0.5",
     "q": "^1.1.2",
     "vinyl-fs": "^0.3.13"
+  },
+  "devDependencies": {
+    "assert": "^1.3.0",
+    "mocha": "^2.1.0"
   }
 }

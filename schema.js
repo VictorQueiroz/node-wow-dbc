@@ -3,9 +3,11 @@
 function Schema (schema) {
 	var self = this;
 
-	Object.keys(schema).forEach(function (key) {
-		self[key] = schema[key];
-	});
+	if(schema && typeof schema === 'object') {
+		Object.keys(schema).forEach(function (key) {
+			self[key] = schema[key];
+		});
+	}
 
 	return this;
 }

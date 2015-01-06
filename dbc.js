@@ -22,6 +22,10 @@ function readFile (filename, options) {
 	return deferred.promise;
 }
 
+function getSchemaName (path) {
+	return path.match(/([A-z]{0,})(?:.dbc)$/)[1];
+}
+
 function toCSV (array) {
 	var csv = '';
 	var rows;
@@ -42,22 +46,23 @@ function toCSV (array) {
 	return csv;
 }
 
-DBC.getSchemaName = function (path) {
-	return path.match(/([A-z]{0,})(?:.dbc)$/)[1];
-};
-
 function DBC (path, schemaName) {
+	this.path = path;
+
 	if(!schemaName) {
-		schemaName = DBC.getSchemaName(path);
+		schemaName = this.getSchemaName(path);
 	}
 
-	this.path = path;
 	this.schemaName = schemaName;
 }
 
-DBC.src = vinyl.src;
+DBC.prototype.getSchemaName = function () {
+	return getSchemaName(this.path);
+};
 
-DBC.map = function () {
+exports.src = vinyl.src;
+
+exports.map = function () {
 	return map(function (file, cb) {
 		var dbc = new DBC(file.path);
 
@@ -104,7 +109,8 @@ DBC.prototype.parseStringBlock = function (buffer) {
 	return strings;
 };
 
-DBC.prototype.readBuffer = function (buffer) {
+DBC.prototype.translate = function (buffer) {
+	var schema = this.getSchema();
 	var dbc = this;
 	var rows;
 
@@ -118,22 +124,28 @@ DBC.prototype.readBuffer = function (buffer) {
     throw new Error("File isn't valid DBC (missing magic number: " + MAGIC_NUMBER + ")");
 	}
 
-	this.fields = buffer.readUInt32LE(8);
+	this.columns = buffer.readUInt32LE(8);
 	this.records = buffer.readUInt32LE(4);
 	this.recordSize = buffer.readUInt32LE(12);
 
-	var recordBlock;
-	var recordData;
-	var stringBlockPosition = buffer.length - buffer.readUInt32LE(16);
-	var strings = this.parseStringBlock(buffer.slice(stringBlockPosition));
+	var recordsBlock;
+	var stringsBlockPosition = buffer.length - buffer.readUInt32LE(16);
+	var strings = this.parseStringBlock(buffer.slice(stringsBlockPosition));
 
-	recordBlock = buffer.slice(20, stringBlockPosition);
+	// Define the recordsBlock, which start at 20 and ends up at stringsBlock.
+	recordsBlock = buffer.slice(20, stringsBlockPosition);
 
 	this.rows = rows = [];
 
 	for(var i=0; i<this.records; i++) {
 		var row = {};
-		recordData = recordBlock.slice(i * this.recordSize, (i + 1) * this.recordSize);
+
+		// Break searching for the actual record
+		// through the recordsBlock which contains
+		// only the records and nothing more
+		var from = i * this.recordSize;
+		var to = (i + 1) * this.recordSize;
+		var record = recordsBlock.slice(from, to);
 		var pointer = 0;
 
 		schema.getFields().forEach(function (key, index) {
@@ -142,13 +154,13 @@ DBC.prototype.readBuffer = function (buffer) {
 			var rowName = key.name || 'field_' + (index + 1);
 
 			if(type === 'int') {
-				value = recordData.readInt32LE(pointer)
+				value = record.readInt32LE(pointer)
 			} else if (type === 'uint') {
-				value = recordData.readUInt32LE(pointer);
+				value = record.readUInt32LE(pointer);
 			} else if (type === 'byte') {
-				value = recordData.readInt8(pointer);
+				value = record.readInt8(pointer);
 			} else if (type === 'string') {
-				value = strings[recordData.readInt32LE(pointer)];
+				value = strings[record.readInt32LE(pointer)];
 			}
 
 			row[rowName] = value;
@@ -168,15 +180,9 @@ DBC.prototype.readBuffer = function (buffer) {
 
 DBC.prototype.read = function () {
 	var dbc = this;
-	var schema = this.getSchema();
-
-	this.signature = '';
-	this.records = 0;
-	this.fields = 0;
-	this.recordSize = 0;
 
 	return readFile(this.path).then(function () {
-		return dbc.readBuffer.apply(this, arguments);
+		return dbc.translate.apply(dbc, arguments);
 	});
 };
 
