@@ -22,3 +22,12 @@ dbc.toCSV().then(function (csv) {
 });
 ```
 
+## Usage (Example 2)
+```
+var DBC = require('node-wow-dbc');
+
+DBC.src(['dbc/**/*.dbc', '../dbc.bak/**/*.dbc'])
+	.pipe(DBC.map(function (rows) {
+		//
+	}));
+```
