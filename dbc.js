@@ -20,6 +20,26 @@ function readFile (filename, options) {
 	return deferred.promise;
 }
 
+function toCSV (array) {
+	var csv = '';
+	var rows;
+	var header = '';
+	var lineBreak = "\n";
+	var delimiter = ",";
+
+	header = Object.keys(array[0]);
+
+	array.unshift(header);
+
+	csv = array.map(function (obj) {
+	  return Object.keys(obj).map(function (key) {
+	    return obj[key];
+	  }).join(delimiter);
+	}).join(lineBreak)
+
+	return csv;
+}
+
 function DBC (path, schemaName) {
 	if(!schemaName) {
 		throw new Error('You must define a schemaName before continue.');
@@ -36,6 +56,17 @@ DBC.prototype.getSchema = function () {
 	return new Schema(schema);
 };
 
+DBC.prototype.toJSON = function () {
+	return this.read();
+};
+
+DBC.prototype.toCSV = function () {
+	return this.read().then(function (rows) {
+		return toCSV(rows);
+	});
+};
+
+// Put all the buffer strings in an array.
 DBC.prototype.parseStringBlock = function (buffer) {
 	var pointer = 0;
 	var currentString = '';
