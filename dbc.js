@@ -2,7 +2,9 @@
 
 var Q = require('q');
 var fs = require('fs');
+var map = require('map-stream');
 var path = require('path');
+var vinyl = require('vinyl-fs');
 var Schema = require(path.join(__dirname, 'schema'));
 var MAGIC_NUMBER = 1128416343;
 
@@ -40,14 +42,28 @@ function toCSV (array) {
 	return csv;
 }
 
+DBC.getSchemaName = function (path) {
+	return path.match(/([A-z]{0,})(?:.dbc)$/)[1];
+};
+
 function DBC (path, schemaName) {
 	if(!schemaName) {
-		throw new Error('You must define a schemaName before continue.');
+		schemaName = DBC.getSchemaName(path);
 	}
 
 	this.path = path;
 	this.schemaName = schemaName;
 }
+
+DBC.src = vinyl.src;
+
+DBC.map = function () {
+	return map(function (file, cb) {
+		var dbc = new DBC(file.path);
+
+		cb(null, file);
+	});
+};
 
 DBC.prototype.getSchema = function () {
 	var schemaName = this.schemaName;
@@ -88,6 +104,68 @@ DBC.prototype.parseStringBlock = function (buffer) {
 	return strings;
 };
 
+DBC.prototype.readBuffer = function (buffer) {
+	var dbc = this;
+	var rows;
+
+	this.signature = buffer.toString('utf8', 0, 4);
+
+	if(this.signature !== 'WDBC') {
+		throw new Error('DBC \'' + path + '\' has an invalid signature and is therefore not valid');
+	}
+
+	if(buffer.readUInt32LE(0) !== MAGIC_NUMBER) {
+    throw new Error("File isn't valid DBC (missing magic number: " + MAGIC_NUMBER + ")");
+	}
+
+	this.fields = buffer.readUInt32LE(8);
+	this.records = buffer.readUInt32LE(4);
+	this.recordSize = buffer.readUInt32LE(12);
+
+	var recordBlock;
+	var recordData;
+	var stringBlockPosition = buffer.length - buffer.readUInt32LE(16);
+	var strings = this.parseStringBlock(buffer.slice(stringBlockPosition));
+
+	recordBlock = buffer.slice(20, stringBlockPosition);
+
+	this.rows = rows = [];
+
+	for(var i=0; i<this.records; i++) {
+		var row = {};
+		recordData = recordBlock.slice(i * this.recordSize, (i + 1) * this.recordSize);
+		var pointer = 0;
+
+		schema.getFields().forEach(function (key, index) {
+			var value;
+			var type = key.type;
+			var rowName = key.name || 'field_' + (index + 1);
+
+			if(type === 'int') {
+				value = recordData.readInt32LE(pointer)
+			} else if (type === 'uint') {
+				value = recordData.readUInt32LE(pointer);
+			} else if (type === 'byte') {
+				value = recordData.readInt8(pointer);
+			} else if (type === 'string') {
+				value = strings[recordData.readInt32LE(pointer)];
+			}
+
+			row[rowName] = value;
+
+			if(type === 'byte') {
+				pointer += 1;
+			} else if (type !== 'null' && type !== 'byte' && type !== 'localization') {
+				pointer += 4;
+			}
+		});
+
+		rows.push(row);
+	}
+
+	return rows;
+};
+
 DBC.prototype.read = function () {
 	var dbc = this;
 	var schema = this.getSchema();
@@ -97,65 +175,8 @@ DBC.prototype.read = function () {
 	this.fields = 0;
 	this.recordSize = 0;
 
-	return readFile(this.path).then(function (buffer) {
-		dbc.signature = buffer.toString('utf8', 0, 4);
-
-		if(dbc.signature !== 'WDBC') {
-			throw new Error('DBC \'' + path + '\' has an invalid signature and is therefore not valid');
-		}
-
-		if(buffer.readUInt32LE(0) !== MAGIC_NUMBER) {
-      throw new Error("File isn't valid DBC (missing magic number: " + MAGIC_NUMBER + ")");
-		}
-
-		dbc.fields = buffer.readUInt32LE(8);
-		dbc.records = buffer.readUInt32LE(4);
-		dbc.recordSize = buffer.readUInt32LE(12);
-
-		var recordBlock;
-		var recordData;
-		var stringBlockPosition = buffer.length - buffer.readUInt32LE(16);
-		var strings = dbc.parseStringBlock(buffer.slice(stringBlockPosition));
-
-		recordBlock = buffer.slice(20, stringBlockPosition);
-
-		var rows;
-
-		dbc.rows = rows = [];
-
-		for(var i=0; i<dbc.records; i++) {
-			var row = {};
-			recordData = recordBlock.slice(i * dbc.recordSize, (i + 1) * dbc.recordSize);
-			var pointer = 0;
-
-			schema.getFields().forEach(function (key, index) {
-				var value;
-				var type = key.type;
-				var rowName = key.name || 'field_' + (index + 1);
-
-				if(type === 'int') {
-					value = recordData.readInt32LE(pointer)
-				} else if (type === 'uint') {
-					value = recordData.readUInt32LE(pointer);
-				} else if (type === 'byte') {
-					value = recordData.readInt8(pointer);
-				} else if (type === 'string') {
-					value = strings[recordData.readInt32LE(pointer)];
-				}
-
-				row[rowName] = value;
-
-				if(type === 'byte') {
-					pointer += 1;
-				} else if (type !== 'null' && type !== 'byte' && type !== 'localization') {
-					pointer += 4;
-				}
-			});
-
-			rows.push(row);
-		}
-
-		return dbc.rows;
+	return readFile(this.path).then(function () {
+		return dbc.readBuffer.apply(this, arguments);
 	});
 };
 
