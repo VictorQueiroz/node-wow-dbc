@@ -1,6 +1,6 @@
 {
   "name": "node-wow-dbc",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "World of Warcraft client side data manipulation node module.",
   "main": "dbc.js",
   "scripts": {
