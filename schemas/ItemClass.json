@@ -8,59 +8,16 @@
 		"type": "uint"
 	},
 	{
-		"name": "isWeapon",
+		"type": "uint"
+	},
+	{
+		"type": "uint"
+	},
+	{
 		"type": "uint"
 	},
 	{
 		"name": "name",
 		"type": "string"
-	},
-	{
-		"type": "int"
-	},
-	{
-		"type": "int"
-	},
-	{
-		"type": "int"
-	},
-	{
-		"type": "int"
-	},
-	{
-		"type": "int"
-	},
-	{
-		"type": "int"
-	},
-	{
-		"type": "int"
-	},
-	{
-		"type": "int"
-	},
-	{
-		"type": "int"
-	},
-	{
-		"type": "int"
-	},
-	{
-		"type": "int"
-	},
-	{
-		"type": "int"
-	},
-	{
-		"type": "int"
-	},
-	{
-		"type": "int"
-	},
-	{
-		"type": "int"
-	},
-	{
-		"type": "int"
 	}
 ]

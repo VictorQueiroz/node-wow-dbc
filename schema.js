@@ -12,7 +12,7 @@ function Schema (schema) {
 	return this;
 }
 
-Schema.prototype.getFields = function () {
+Schema.prototype.getColumns = function () {
 	var self = this;
 	var fields = [];
 

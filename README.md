@@ -22,6 +22,10 @@ dbc.toCSV().then(function (csv) {
 });
 ```
 
+## FAQ
+- Can I make it work with TBC, Cataclysm and WotLK?
+Yes, you can, the only thing you should change is the Schema of the DBC, if you want strings.
+
 ## Usage (Example 2)
 ```
 var DBC = require('node-wow-dbc');
