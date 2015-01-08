@@ -1,0 +1,39 @@
+[	{
+		"name": "id",
+		"type": "uint"
+	},
+	{
+		"type": "uint"
+	},
+	{
+		"type": "uint"
+	},
+	{
+		"type": "uint"
+	},
+	{
+		"type": "uint"
+	},
+	{
+		"type": "uint"
+	},
+	{
+		"type": "uint"
+	},
+	{
+		"type": "uint"
+	},
+	{
+		"type": "uint"
+	},
+	{
+		"type": "uint"
+	},
+	{
+		"type": "uint"
+	},
+	{
+		"type": "string",
+		"name": "name"
+	}
+]

@@ -1,0 +1,46 @@
+[
+	{
+		"name": "id",
+		"type": "uint"
+	},
+	{
+		"name": "class",
+		"type": "uint"
+	},
+	{
+		"name": "subclass",
+		"type": "uint"
+	},
+	{
+		"type": "uint"
+	},
+	{
+		"type": "uint"
+	},
+	{
+		"type": "uint"
+	},
+	{
+		"type": "uint"
+	},
+	{
+		"type": "uint"
+	},
+	{
+		"type": "uint"
+	},
+	{
+		"type": "uint"
+	},
+	{
+		"type": "uint"
+	},
+	{
+		"name": "name",
+		"type": "string"
+	},
+	{
+		"name": "verboseName",
+		"type": "string"
+	}
+]
