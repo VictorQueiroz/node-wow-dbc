@@ -1,6 +1,6 @@
 {
   "name": "node-wow-dbc",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "World of Warcraft client side data manipulation node module.",
   "main": "dbc.js",
   "scripts": {
@@ -15,6 +15,7 @@
   "dependencies": {
     "map-stream": "0.0.5",
     "q": "^1.1.2",
+    "underscore": "^1.7.0",
     "vinyl-fs": "^0.3.13"
   },
   "devDependencies": {

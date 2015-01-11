@@ -1,0 +1,70 @@
+[
+	{
+		"name": "Id",
+		"type": "uint"
+	},
+	{
+		"type": "string",
+		"name": "InternalName"
+	},
+	{
+		"type": "uint",
+		"name": "Type"
+	},
+	{
+		"type": "uint",
+		"name": "Flags"
+	},
+	{
+		"type": "uint",
+		"name": "IsBattleground"
+	},
+	{
+		"type": "string",
+		"name": "Name"
+	},
+	{
+		"type": "string",
+		"name": "Name"
+	},
+	{
+		"type": "uint",
+		"name": "AreaTableID"
+	},
+  {
+  	"type": "string"
+  },
+  {
+  	"type": "string"
+  },
+  {
+  	"type": "uint"
+  },
+  {
+  	"type": "uint"
+  },
+  {
+  	"type": "uint"
+  },
+  {
+  	"type": "uint"
+  },
+  {
+  	"type": "uint"
+  },
+  {
+  	"type": "uint"
+  },
+  {
+  	"type": "uint"
+  },
+  {
+  	"type": "uint"
+  },
+  {
+  	"type": "uint"
+  }, 
+	{
+		"type": "uint"
+	}
+]

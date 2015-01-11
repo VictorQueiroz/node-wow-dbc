@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('underscore');
 var Q = require('q');
 var fs = require('fs');
 var map = require('map-stream');
