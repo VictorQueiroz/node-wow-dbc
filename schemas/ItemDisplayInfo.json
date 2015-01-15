@@ -1,0 +1,98 @@
+[
+	{
+		"name": "ID",
+		"type": "uint"
+	},
+	{
+		"name": "LeftModel",
+		"type": "string"
+	},
+	{
+		"name": "RightModel",
+		"type": "string"
+	},
+	{
+		"name": "LeftModelTexture",
+		"type": "string"
+	},
+	{
+		"name": "RightModelTexture",
+		"type": "string"
+	},
+	{
+		"name": "Icon1",
+		"type": "string"
+	},
+	{
+		"name": "Icon2",
+		"type": "string"
+	},
+	{
+		"name": "geosetGroup",
+		"type": "uint"
+	},
+	{
+		"name": "geosetGroup",
+		"type": "uint"
+	},
+	{
+		"name": "flags",
+		"type": "uint"
+	},
+	{
+		"name": "spellVisualID",
+		"type": "uint"
+	},
+	{
+		"name": "groupSoundIndex",
+		"type": "uint"
+	},
+	{
+		"name": "helmetGeosetVis",
+		"type": "string"
+	},
+	{
+		"name": "helmetGeosetVis",
+		"type": "string"
+	},
+	{
+		"name": "UpperArmTexture",
+		"type": "string"
+	},
+	{
+		"name": "LowerArmTexture",
+		"type": "string"
+	},
+	{
+		"name": "HandsTexture",
+		"type": "string"
+	},
+	{
+		"name": "UpperTorsoTexture",
+		"type": "string"
+	},
+	{
+		"name": "LowerTorsoTexture",
+		"type": "string"
+	},
+	{
+		"name": "UpperLegTexture",
+		"type": "string"
+	},
+	{
+		"name": "LowerLegTexture",
+		"type": "string"
+	},
+	{
+		"name": "FootTexture",
+		"type": "string"
+	},
+	{
+		"name": "itemVisual",
+		"type": "uint"
+	},
+	{
+		"name": "particleColorID",
+		"type": "uint"
+	}
+]
